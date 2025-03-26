@@ -1,68 +1,24 @@
-class PDA:
-    def __init__(self):
-        self.stack = []  
-        self.state = 'q0' 
-        self.i = 0
-        
-    def reset(self):
-        self.stack = []  
-        self.state = 'q0'  
-        self.i = 0
+def is_accepted_by_pda(string):
+    stack = []
+    count_b = 0
 
-    def process_input(self, input_string):
-        self.stack.append('Z0')  # Initial stack symbol
-        
-        while self.i < len(input_string):
-            symbol = input_string[self.i]
-            
-            if self.state == 'q0':
-                if symbol == 'a':
-                    self.stack.append('a')  # Push 'a' for each 'a'
-                    self.i += 1
-                elif symbol == 'b':
-                    # Transition to state q1 when encountering the first b
-                    self.state = 'q1'  
-                    if self.stack and self.stack[-1] == 'a':  # Pop 'a' for the first 'b'
-                        self.stack.pop()
-                        self.i += 2
-                    else:
-                        return False  # Reject if no matching 'a' to pop for 'b'
-                else:
-                    return False  # Reject if invalid symbol
+    for symbol in string:
+        if symbol == 'a':
+            stack.append('a')
+        elif symbol == 'b':
+            count_b += 1
+            if stack:
+                stack.pop()
+            elif count_b > 2 * len(stack):  # Fix the incorrect check
+                return False
+        else:
+            return False  # Reject if the character is not 'a' or 'b'
 
-            elif self.state == 'q1':
-                if symbol == 'b':
-                    if self.stack and self.stack[-1] == 'a':  # Pop 'a' for the second 'b'
-                        self.stack.pop()
-                        self.i += 2
-                    else:
-                        return False  # Reject if no matching 'a' to pop for 'b'
-                else:
-                    return False  # Reject if invalid symbol
+    return len(stack) == 0 and count_b == 2 * (count_b + len(stack))  # Ensure 2n 'b's
 
-        # At the end, the stack should only contain the initial symbol 'Z0'
-        return self.stack == ['Z0']  and len(input_string) == self.i
+input_string = input("Enter a string: ")
 
-def test_pda():
-    pda = PDA()
-
-    # Test cases
-    test_strings = [
-        "abb",        # Rejected
-        "aaabbb",     # Accepted
-        "ab",         # Rejected
-        "aaabbbab",   # Rejected
-        "aabbbb",     # Rejected
-        "abc",        # Rejected
-        "aaabbbbbb",  # Rejected
-    ]
-
-    for test_string in test_strings:
-        pda.reset()  # Reset the PDA before each test
-        result = pda.process_input(test_string)
-        print(f"Input: {test_string} - {'Accepted' if result else 'Rejected'}")
-
-
-# Run the test
-if __name__ == "__main__":
-    test_pda()
+if is_accepted_by_pda(input_string):
+    print("String is accepted.")
+else:
+    print("String is not accepted.")

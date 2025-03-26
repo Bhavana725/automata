@@ -1,61 +1,24 @@
-class PDA:
-    def __init__(self):
-        self.stack = []  
-        self.state = 'q0' 
+def is_accepted_by_pda(string):
+    stack = []
+    length = len(string)
 
-    def reset(self):
-        self.stack = []
-        self.state = 'q0'
+    if length % 2 != 0:
+        return False  
 
-    def process_input(self, input_string):
-        self.stack.append('Z0')
-        
-        for symbol in input_string:
-            if self.state == 'q0':
-                if symbol == 'a':
-                    self.stack.append('A')
-                elif symbol == 'b':
-                    if self.stack and self.stack[-1] == 'A':
-                        self.stack.pop()  
-                        self.state = 'q1'
-                    else:
-                        return False  
-                else:
-                    return False  
+    mid = length // 2
 
-            elif self.state == 'q1':
-                if symbol == 'b':
-                    if self.stack and self.stack[-1] == 'A':
-                        self.stack.pop()  
-                    else:
-                        return False  
-                else:
-                    return False  
-        if self.stack == ['Z0']:
-            return True
-        else:
-            return False
+    for i in range(mid):
+        stack.append(string[i])
 
-def test_pda():
-    pda = PDA()
+    for i in range(mid, length):
+        if not stack or stack.pop() != string[i]:
+            return False  
 
-    # Test cases
-    test_strings = [
-        "aabb",      
-        "aaabbb",    
-        "ab",        
-        "aaabbbab",  
-        "aab",       
-        "abc",
-        "abab"
-    ]
+    return len(stack) == 0
 
-    for test_string in test_strings:
-        pda.reset()  # Reset the PDA before each test
-        result = pda.process_input(test_string)
-        print(f"Input: {test_string} - {'Accepted' if result else 'Rejected'}")
+input_string = input("Enter a string: ")
 
-
-# Run the test
-if __name__ == "__main__":
-    test_pda()
+if is_accepted_by_pda(input_string):
+    print("String is accepted.")
+else:
+    print("String is not accepted.")

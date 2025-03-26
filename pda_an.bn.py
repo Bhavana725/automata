@@ -1,18 +1,16 @@
 def is_accepted_by_pda(string):
     stack = []
-    length = len(string)
-
-    if length % 2 != 0:
-        return False  
-
-    mid = length // 2
-
-    for i in range(mid):
-        stack.append(string[i])
-
-    for i in range(mid, length):
-        if not stack or stack.pop() != string[i]:
-            return False  
+    
+    for symbol in string:
+        if symbol == 'a':
+            stack.append('a')
+        elif symbol == 'b':
+            if stack:
+                stack.pop()
+            else:
+                return False
+        else:
+            return False
 
     return len(stack) == 0
 
